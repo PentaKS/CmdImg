@@ -1,7 +1,7 @@
 # CmdImg
 A simple command line tool to create ascii art of any given image in PPM3 format. 
 
-<video src= "readme_data/cmdimg.mp4" autoplay muted loop playsinline title="CMDIMG"> </video>
+<video src= "https://github.com/user-attachments/assets/59e0dc78-225f-473d-8526-59f928bbeeba" autoplay muted loop playsinline title="CMDIMG"> </video>
 
 windows command prompt text size: 7 <br> original image size: 1400 X 1050 <br>
 command: 
@@ -67,11 +67,11 @@ or if don't want to generate the ascii art
 
 
 # Examples
-|<img src="readme_data/image.png" width="70%">|
+<img src="readme_data/image.png" width="70%">
 <br>
 text size: 10, mode: 4
 <br>
-|<img src="readme_data/image-2.png" width="70%">|
+<img src="readme_data/image-2.png" width="70%">
 <br>
 text size: 10, mode: 0
 
