@@ -1,7 +1,7 @@
 # CmdImg
 A simple command line tool to create ascii art of any given image in PPM3 format. 
 
-<video src= "https://github.com/user-attachments/assets/59e0dc78-225f-473d-8526-59f928bbeeba" autoplay muted loop playsinline title="CMDIMG"> </video>
+<video src= "readme_data/cmdimg.mp4" autoplay muted loop playsinline title="CMDIMG"> </video>
 
 windows command prompt text size: 7 <br> original image size: 1400 X 1050 <br>
 command: 
