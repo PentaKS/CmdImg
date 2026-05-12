@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include "command_manager.hpp"
 
 using namespace std;
 typedef std::vector<std::vector<int>> IMG_DATA;
@@ -22,7 +23,7 @@ bool verify_path(string &path) {
 }
 string Header, Width, Height, RGB; // header data
 int num_width = 0, num_height = 0; // numeric conversion
-int num_width_c = 0, num_height_c = 0; // numeric copy
+int num_width_c = 0, num_height_c = 0; // numeric copy 
 IMG_DATA image_data; // pixel data
 IMG_DATA image_color_data; // pixel color;
 
@@ -140,6 +141,7 @@ IMG_DATA scale_down_image (IMG_DATA input_image_data, int scaling_factor = 1) {
     return new_image_data;
 }
 
+// modes 
 string ascii_gradient1 = "`.,-:;~'\"^*<+>(){}[]!$&@#%"; // best for normal images
 string ascii_gradient2 = "`.,'\"::^-+~!={}()[]*&$#@%";
 string box_gradient = ".,:;-~+=![]";  // best for bright images
@@ -147,9 +149,10 @@ string box_gradient2 = "`-/.\\[]!#";
 /// Ai suggestions
 string visual_density = " ,;-=+*#%@";  // most beautiful 
 string subpixel = "`'\".,~!()/\\|[]";
+//////////////
 string subpixel_black_shadows = "`'\".,~!()/\\|[]";
 string subpixel_green_black = "`'.,~!()/\\|[]";
-//////////////
+
 std::vector<string> ascii_gradients = {ascii_gradient1, ascii_gradient2, box_gradient, box_gradient2, visual_density, subpixel,subpixel_black_shadows,subpixel_green_black};
 char detect_value(int val, int ascii_gradient_mode) {
     auto ascii_gradient = ascii_gradients[ascii_gradient_mode];
@@ -177,77 +180,130 @@ void print_ascii(IMG_DATA final_image, int ascii_gradient_mode) {
 }
 
 int main (int argsc, char* argsv[]) {
-    string input_path_ppm = argsv[1];
-    string command_sep = argsv[2];
-    string output_path_ppm;
-conversion_label:
+
+    string input_path_ppm = "default";
+    string output_path_ppm = "default";
+
+    load_blocks(argsc, argsv);
+    auto string_arguments = parse_string_arguments();
+    for (auto & sa : string_arguments) {
+        if (sa.first == "-i" || sa.first == "-input") {
+            input_path_ppm = sa.second;
+        } else if (sa.first == "-o" || sa.first == "-output") {
+            output_path_ppm = sa.second;
+        }
+    }
+
+    int mode = 0, greyscale_mode = 0, console_height = 0, console_width = 0, downscale_factor = 1;
+    auto int_arguments = parse_int_arguments();
+    for (auto & ia : int_arguments) {
+        if (ia.first == "-m" || ia.first == "-mode") {
+            mode = ia.second;
+        } else if (ia.first == "-g" || ia.first == "-greyscale_mode") {
+            greyscale_mode = ia.second;
+        } else if (ia.first == "-ch" || ia.first == "-console_height") {
+            console_height = ia.second;
+        } else if (ia.first == "-cw" || ia.first == "-console_width") {
+            console_width = ia.second;
+        } else if (ia.first == "-d" || ia.first == "-downscale_factor") {
+            downscale_factor = ia.second;
+        }
+    }
+    cout << "mode " << mode << " greyscale_mode " << greyscale_mode << " console_height" << console_height << " console_width " << console_width << " downscale_factor " << downscale_factor << endl;
+
+    string help = "default", no_ascii = "false";
+    auto no_input_arguments = parse_no_input_arguments();
+    for (auto & nia : no_input_arguments) {
+        if ("-help" == nia || "-h" == nia) {
+            show_help();
+            goto end_of_program;
+        } else if ("-no_ascii" == nia || "-na" == nia) {
+            no_ascii = "true";
+            cout << "ascii changed";
+        }
+    }
+
     if (verify_path(input_path_ppm) == true) {
-        cout << "path :" << input_path_ppm << endl;
+        cout << "input path detected. path : "<< input_path_ppm << endl;
         load_image_data(input_path_ppm);
-        char command = 'c';
-        int console_height = 0;
+
+        if (console_height == 0 && console_width == 0 && downscale_factor == 1) {
+            string response = "default";
+            ask_again:
+                cout << "you have not specified any of the [console_height/console_width/downscale_factor] or keep downscale_factor = 1 ? \nplease specify [cw/ch/d/keep]: ";
+                cin >> response;
+                if ("ch" == response || "1" == response || "console_height" == response) {
+                    cout << "please enter console_height: ";
+                    cin >> console_height;
+                } else if ("cw" == response || "2" == response || "console_width" == response) {
+                    cout << "please enter console_width: ";
+                    cin >> console_width;
+                } else if ("d" == response || "3" == response || "downscale_factor" == response) {
+                    cout << "please enter downscale_factor: ";
+                    cin >> downscale_factor;
+                } else if ("keep" == response || "4" == response || "k" == response) {
+                    downscale_factor = 1;
+                } else {
+                    goto ask_again;
+                }
+        } else {
+            cout << "invalid path" << endl;
+        }
+
         int scaling_factor = 1;
+        if (console_height!=0) {
+            scaling_factor = num_height/console_height;
+        } else if (console_width!=0) {
+            scaling_factor = num_width/console_width;
+        } else {
+            scaling_factor = downscale_factor;
+        }
 
-        loop_label:
-            cout << "\nenter your max console height(h) \nor \nenter your downscale factor(d) [current: " << num_width << "X" <<  num_height <<"]  (h/d): ";
-            cin >> command;
-            if ('h' == command) {
-                cout << "enter max height (int) : ";
-                cin >> console_height;
-                scaling_factor = num_height/console_height;
-            } else if ('d' == command) {
-                cout << "enter downscale factor (int): ";
-                cin >> scaling_factor;
-            } else {
-                cout << "invalid option" << endl;
-                goto loop_label;
-            }
         greyscale_image();
-
         image_data = scale_down_image(image_data, scaling_factor);
 
-        int m;
-        string mode_command = argsv[4];
-        if (mode_command == "-mode" || mode_command == "-m") {
-            string mode = argsv[5];
-            stringstream mstream(mode);
-            mstream >> m;
+        if (mode == 0) {
+            cout << "no mode specified, using -m 0 i.e. mode=0" << endl;
+        } 
+        cout << no_ascii << endl;
+        if (no_ascii == "true") {
+            cout << "not printing ascii as specified" << endl;
+        } else if (mode >=0 && mode < ascii_gradients.size()) {
+            print_ascii(image_data, mode);
         } else {
-            m = 0;
-            std::cout << "no mode is given [switching to default mode] i.e. -m 0";
-        }
-
-        if (m < ascii_gradients.size() && m >= 0)
-            print_ascii(image_data, m);
-        else 
             cout << "[invalid mode] can't generate ASCII, available modes are integers in [0, " << ascii_gradients.size()-1 << "] " << endl;
+        }
+        
 
-        if (command_sep == "-o" || command_sep == "-output") {
-            cout << "\noutput path detected" <<endl;
-            output_path_ppm = argsv[3];
-            if (verify_path(output_path_ppm) == true) {
+        if (output_path_ppm != "default") {
+            if(verify_path(output_path_ppm) == true) {
+                cout << "output path detected. writing to: " << output_path_ppm << endl;
                 write_image_data(output_path_ppm);
             } else {
-                cout << "invalid output path" << endl;
+                cout << "invalid output path." << endl;
             }
         } else {
-            cout << "overwriting otiginal image" << endl;
-            output_path_ppm = input_path_ppm;
-            write_image_data(output_path_ppm);
+            cout << "\nno output path specified. " << endl;
+            char yes_or_no = 'c';
+            ask_about_out_path_again:
+                cout << "overwrite the current image path or save it [y/n/s]?: ";
+                cin >> yes_or_no;
+                if ('y' == yes_or_no || 'Y' == yes_or_no) {
+                    write_image_data(input_path_ppm);
+                    cout << "check image: " << input_path_ppm << endl;
+                } else if ('n' == yes_or_no || 'N' == yes_or_no) {
+                    cout << "image not saved" << endl;
+                } else if ('s' == yes_or_no || 'S' == yes_or_no) {
+                    cout << "enter the output path: " ;
+                    cin >> output_path_ppm;
+                    write_image_data(output_path_ppm);
+                    cout << "check image: " << output_path_ppm << endl;
+                } else {
+                    goto ask_about_out_path_again;
+                }
         }
-
-
-    } else {
-        ////// code doesn't work
-        cout << "converting input image to ppm" << endl;
-        // string converted_output = input_path_ppm;
-        // converted_output = converted_output.substr(0, converted_output.size() - 5);
-        // converted_output = converted_output+"_converted.ppm";
-        // string command_convert = "ffmpeg -i "+input_path_ppm+" "+converted_output;
-        // system (command_convert.c_str());
-
-        // input_path_ppm = converted_output;
-        // goto conversion_label;
-
     }
+
+    end_of_program:
+    cout << "program terminated" <<endl;
 }
