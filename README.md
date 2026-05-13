@@ -33,6 +33,7 @@ RGB
 | `-i` or `-input` | input image  e.g. -i test_image_1.ppm|
 | `-o` or `-output` | output image e.g. -o output.ppm |
 | `-m` or `-mode` | ascii mode / style, available modes: <ul><li> [-m 0] ascii_gradient1<li>[-m `1`] ascii_gradient2</li><li>[-m `2`] box_gradient1</li><li>[-m `3`] box_gradient2</li><li>[-m `4`] visual_density</li><li>[-m `5`] subpixel   </li>       <li>[-m `6`] subpixel_black_shadows </li><li>[-m `7`] subpixel_green_black</li>    <li> e.g. -m 3</li> </ul> |
+| `-lnm` or `-load_new_mode` | can load custom ascii gradients from a .txt file. <br> <ul> <li> the file should be of the form: <br> `gradient_name = [gradient]` <br> example: `my_mode = ';!@ ` </li> </ul> <br> Example: `-lnm my_mode.txt` |
 | `-ch` or `-console_height` | images are larger than console, automatic scaling_factor calculation form console height. e.g. -ch 40     |  
 | `-cw` or `-console_height` | images are larger than console, automatic scaling_factor calculation form form console width   e.g. -cw 40     |    
 | `-d` or `-downscale_factor` | images are larger than console, manual scaling_factor input e.g. -d 4 |
@@ -65,14 +66,29 @@ or if don't want to generate the ascii art
 </tr>
 </table>
 
+# Custom Modes 
+the `-lnm` command offers users to create custom modes or gradients for their ascii.
+to do so first you should have a `.txt` file of the format:
+```
+gradient1 = `'.,:;+=@#
+gradient2 = ,.()[]{}
+...
+```
+it is necessary that user don't leave the file empty or else an error might appear.
+
+and to load the file in program simply use:
+```
+.\main.exe -i [input].ppm -lnm my_mode.txt
+```
+
+
 
 # Examples
-<img src="readme_data/image.png" width="70%">
-<br>
+<img src="readme_data/image.png" width="100%">
 text size: 10, mode: 4
-<br>
-<img src="readme_data/image-2.png" width="70%">
-<br>
+<img src="readme_data/image-2.png" width="100%">
 text size: 10, mode: 0
+<img src="readme_data/image-3.png" width = "100%">
+text size: 10, mode: 3
 
 

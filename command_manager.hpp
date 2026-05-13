@@ -6,17 +6,22 @@
 using namespace std;
 
 
+
 std::vector<string> string_input_commands = {
     "-i",
     "-input",
     "-o",
-    "-output"
+    "-output",
+    "-lnm",
+    "-load_new_mode"
 };
 std::vector<string> int_input_commands = {
     "-m",
     "-mode",
     "-g",
     "-greyscale_mode",
+    "-s",
+    "-shades",
     "-ch",
     "-console_height",
     "-cw",
@@ -104,6 +109,12 @@ void show_help () {
     cout << "                          |     [-m 6] subpixel_black_shadows    " << endl;
     cout << "                          |     [-m 7] subpixel_green_black      " << endl;
     cout << "                          |     e.g. -m 3                        " << endl;
+    cout << "  -lnm / -load_new_mode   | can load custom ascii gradients from " << endl;
+    cout << "                          | a .txt file.                         " << endl;
+    cout << "                          | * the file should be of the form:    " << endl;
+    cout << "                          |      gradient_name = [gradient]      " << endl;
+    cout << "                          | e.g. my_mode1 = `;!%@                " << endl;
+    cout << "                          | example: -lnm my_mode.txt            " << endl;
     cout << "   -ch / -console_height  | images are larger than console,      " << endl;
     cout << "                          | automatic scaling_factor calculation " << endl;
     cout << "                          | form console height. e.g. -ch 40     " << endl;

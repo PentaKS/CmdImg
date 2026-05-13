@@ -23,7 +23,7 @@ bool verify_path(string &path) {
 }
 string Header, Width, Height, RGB; // header data
 int num_width = 0, num_height = 0; // numeric conversion
-int num_width_c = 0, num_height_c = 0; // numeric copy 
+int num_width_c = 0, num_height_c = 0; // numeric copy
 IMG_DATA image_data; // pixel data
 IMG_DATA image_color_data; // pixel color;
 
@@ -85,16 +85,42 @@ void write_image_data (string o_path, int o_width = num_width_c, int o_height = 
 
     cout << "check your file "<<o_width << "X" << o_height << " : " << o_path << endl;
 }
-void greyscale_image() {
+void greyscale_image(int greyscale_mode=0, int shades = 255) {
+
     for (auto & p : image_data) {
+        int maxv = 0;
+
+        switch (greyscale_mode) {
+            case 0:{
+                double avg = (p[R] + p[G] + p[B])/3;
+                maxv = int (avg);
+                break;
+            }
+            case 1:{
+                double max_of_three = fmax(p[R], p[G]);
+                maxv = fmax(p[B], max_of_three);
+                break;
+            }
+            case 2:{
+                double sq_avg = (p[R]*p[R] + p[G]*p[G] + p[B]*p[B])/3;
+                maxv = int (sqrt(sq_avg));
+                break;
+            }
+            case 3:{
+                double avg = (p[R] + p[G] + p[B])/3;
+                double min_shade = 255/ (shades -1);
+                maxv = int((avg/min_shade) + 0.5) * min_shade;
+                break;
+            }
+        }
         // double max_of_three = fmax(p[R], p[G]);
         // max_of_three = fmax(p[B], max_of_three);    //// best for normal images 
 
         // double sq_avg = (p[R]*p[R] + p[G]*p[G] + p[B]*p[B])/3;
         // int maxv = int (sqrt(sq_avg)); //// best for really bright images 
 
-        double avg = (p[R] + p[G] + p[B])/3;
-        int maxv = int (avg); //// best for really bright images 
+        // double avg = (p[R] + p[G] + p[B])/3;
+        // int maxv = int (avg); //// best for really bright images 
         
         p = {maxv, maxv, maxv};
     }
@@ -141,7 +167,6 @@ IMG_DATA scale_down_image (IMG_DATA input_image_data, int scaling_factor = 1) {
     return new_image_data;
 }
 
-// modes 
 string ascii_gradient1 = "`.,-:;~'\"^*<+>(){}[]!$&@#%"; // best for normal images
 string ascii_gradient2 = "`.,'\"::^-+~!={}()[]*&$#@%";
 string box_gradient = ".,:;-~+=![]";  // best for bright images
@@ -152,8 +177,30 @@ string subpixel = "`'\".,~!()/\\|[]";
 //////////////
 string subpixel_black_shadows = "`'\".,~!()/\\|[]";
 string subpixel_green_black = "`'.,~!()/\\|[]";
-
 std::vector<string> ascii_gradients = {ascii_gradient1, ascii_gradient2, box_gradient, box_gradient2, visual_density, subpixel,subpixel_black_shadows,subpixel_green_black};
+
+void load_new_mode (string filename) {
+    ascii_gradients.clear();
+
+    ifstream mode(filename);
+    string modename, equals_to, gradient;
+    std::vector<string> modenames;
+
+    while(!mode.eof()) {
+        mode >> modename >> equals_to >> gradient;
+        ascii_gradients.push_back(gradient);
+        modenames.push_back(modename);
+    }
+
+    cout << "new modes loaded from: " << filename << " they are:" << endl;
+    int iterator = 0;
+    for (auto & m: modenames) {
+        cout << "["<< iterator<< "]  " << m << endl;
+        iterator++;
+    }
+
+    cout << "Use these integers to select mode when asked" << endl;
+}
 char detect_value(int val, int ascii_gradient_mode) {
     auto ascii_gradient = ascii_gradients[ascii_gradient_mode];
     int gs = ascii_gradient.size();
@@ -183,6 +230,7 @@ int main (int argsc, char* argsv[]) {
 
     string input_path_ppm = "default";
     string output_path_ppm = "default";
+    string load_new_mode_path_txt = "default";
 
     load_blocks(argsc, argsv);
     auto string_arguments = parse_string_arguments();
@@ -191,10 +239,19 @@ int main (int argsc, char* argsv[]) {
             input_path_ppm = sa.second;
         } else if (sa.first == "-o" || sa.first == "-output") {
             output_path_ppm = sa.second;
+        } else if (sa.first == "-lnm" || sa.first == "-load_new_mode") {
+            auto copy = ascii_gradients;
+            load_new_mode_path_txt = sa.second;
+            load_new_mode(load_new_mode_path_txt);
+            if (ascii_gradients.size() == 0) {
+                cout << "nothing in the given mode file switching to default modes [0,7]" << endl;
+                ascii_gradients = copy;
+            }
         }
     }
 
     int mode = 0, greyscale_mode = 0, console_height = 0, console_width = 0, downscale_factor = 1;
+    int number_of_shades = 255;
     auto int_arguments = parse_int_arguments();
     for (auto & ia : int_arguments) {
         if (ia.first == "-m" || ia.first == "-mode") {
@@ -207,9 +264,11 @@ int main (int argsc, char* argsv[]) {
             console_width = ia.second;
         } else if (ia.first == "-d" || ia.first == "-downscale_factor") {
             downscale_factor = ia.second;
+        } else if (ia.first == "-s" || ia.first == "-shades") {
+            number_of_shades = ia.second;
         }
     }
-    cout << "mode " << mode << " greyscale_mode " << greyscale_mode << " console_height" << console_height << " console_width " << console_width << " downscale_factor " << downscale_factor << endl;
+    cout << "mode " << mode << " greyscale_mode " << greyscale_mode << " console_height" << console_height << " console_width " << console_width << " downscale_factor " << downscale_factor << " shades " << number_of_shades << endl;
 
     string help = "default", no_ascii = "false";
     auto no_input_arguments = parse_no_input_arguments();
@@ -259,12 +318,30 @@ int main (int argsc, char* argsv[]) {
             scaling_factor = downscale_factor;
         }
 
-        greyscale_image();
         image_data = scale_down_image(image_data, scaling_factor);
 
+        if (greyscale_mode < 4 && greyscale_mode >= 0 && number_of_shades>=2 && number_of_shades <= 255)
+            greyscale_image(greyscale_mode, number_of_shades);
+        else {
+            cout << "shades can't be zero or greater than 255 and greyscale modes are in range [0, 3]" << endl;
+            goto end_of_program;
+        }
+
         if (mode == 0) {
-            cout << "no mode specified, using -m 0 i.e. mode=0" << endl;
-        } 
+            cout << "no mode specified, current m = 0" << endl;
+            char response = 'c';
+            ask_mode:
+                cout << "do you want to enter a new mode [y/n]: ";
+                cin >> response; 
+                if ('y' == response) {
+                    cout << "enter new mode(int): ";
+                    cin >> mode;
+                } else if ('n' == response) {
+                    cout << "mode is : 0" << endl;
+                } else {
+                    goto ask_mode;
+                }
+        }
         cout << no_ascii << endl;
         if (no_ascii == "true") {
             cout << "not printing ascii as specified" << endl;
@@ -274,7 +351,6 @@ int main (int argsc, char* argsv[]) {
             cout << "[invalid mode] can't generate ASCII, available modes are integers in [0, " << ascii_gradients.size()-1 << "] " << endl;
         }
         
-
         if (output_path_ppm != "default") {
             if(verify_path(output_path_ppm) == true) {
                 cout << "output path detected. writing to: " << output_path_ppm << endl;
@@ -306,4 +382,5 @@ int main (int argsc, char* argsv[]) {
 
     end_of_program:
     cout << "program terminated" <<endl;
+
 }

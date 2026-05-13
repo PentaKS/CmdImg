@@ -1,0 +1,5 @@
+capture_details = `'.,^<>v/#%
+fours = `.;@
+direction = `<^v>@
+brackets = `.(-)[~]{+}@
+sailor_moon = `rionsml@
