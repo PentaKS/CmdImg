@@ -3,7 +3,10 @@ A simple command line tool to create ascii art of any given image in PPM3 format
 
 <img src= "readme_data/cmdimg.gif" title="CMDIMG" width="100%" style="border-radius: 10px;"> 
 
-windows command prompt text size: 7 <br> original image size: 1400 X 1050 <br>
+windows command prompt text size: 7                      <br>
+(low quality blur made ascii bleed, it looks good but actual one is different.)<br>
+(see examples)<br>
+original image size: 1400 X 1050<br>
 command: 
 
 ```
