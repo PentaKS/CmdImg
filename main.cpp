@@ -10,13 +10,13 @@ typedef std::vector<std::vector<int>> IMG_DATA;
 
 constexpr int R = 0, G = 1, B = 2;
 
-bool verify_path(string &path) {
+bool verify_path(string &path, string extension = "ppm") {
     int path_size = path.size();
-    if (path.substr(path_size - 3, 3) == "ppm") {
+    if (path.substr(path_size - 3, 3) == extension) {
         cout << "verified file format" << endl;
         return true;
     } else {
-        cout << "invalid file format, expected format (.ppm)" << endl;
+        cout << "invalid file format, expected format (." << extension <<")" << endl;
         return false;
     }
     return true;
@@ -214,16 +214,27 @@ char detect_value(int val, int ascii_gradient_mode) {
     return ascii_gradient[gs-1];
 }
 
+string char_data;
 void print_ascii(IMG_DATA final_image, int ascii_gradient_mode) {
     int iterator = 0;
     for (auto & p : final_image) {
-        cout << detect_value(p[R], ascii_gradient_mode) << " ";
+        char ascii_value = detect_value(p[R], ascii_gradient_mode);
+        cout << ascii_value << " ";
+        char_data.push_back(ascii_value);
+        char_data.push_back(' ');
 
         if (iterator % num_width_c == 0) {
             cout << endl;
+            char_data.push_back('\n');
         }
         iterator ++;
     }
+}
+
+void out_txt(string filename) {
+    ofstream out_txt_file(filename);
+    
+    out_txt_file << char_data;
 }
 
 int main (int argsc, char* argsv[]) {
@@ -231,6 +242,7 @@ int main (int argsc, char* argsv[]) {
     string input_path_ppm = "default";
     string output_path_ppm = "default";
     string load_new_mode_path_txt = "default";
+    string out_txt_filename = "default";
 
     load_blocks(argsc, argsv);
     auto string_arguments = parse_string_arguments();
@@ -247,6 +259,8 @@ int main (int argsc, char* argsv[]) {
                 cout << "nothing in the given mode file switching to default modes [0,7]" << endl;
                 ascii_gradients = copy;
             }
+        } else if (sa.first == "-ot" || sa.first == "-out_txt") {
+            out_txt_filename = sa.second;
         }
     }
 
@@ -266,7 +280,7 @@ int main (int argsc, char* argsv[]) {
             downscale_factor = ia.second;
         } else if (ia.first == "-s" || ia.first == "-shades") {
             number_of_shades = ia.second;
-        }
+        } 
     }
     cout << "mode " << mode << " greyscale_mode " << greyscale_mode << " console_height" << console_height << " console_width " << console_width << " downscale_factor " << downscale_factor << " shades " << number_of_shades << endl;
 
@@ -377,6 +391,15 @@ int main (int argsc, char* argsv[]) {
                 } else {
                     goto ask_about_out_path_again;
                 }
+        }
+
+        if (out_txt_filename != "default") {
+            if (verify_path(out_txt_filename, "txt")) {
+                out_txt(out_txt_filename);
+            }
+        } else {
+            cout << "no .txt output path given" << endl;
+            goto end_of_program;
         }
     }
 

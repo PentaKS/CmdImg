@@ -13,7 +13,9 @@ std::vector<string> string_input_commands = {
     "-o",
     "-output",
     "-lnm",
-    "-load_new_mode"
+    "-load_new_mode",
+    "-ot",
+    "-out_txt"
 };
 std::vector<string> int_input_commands = {
     "-m",
@@ -99,6 +101,8 @@ void show_help () {
     cout << "-------- Commands -------------------------- Usage --------------" << endl << endl;
     cout << "        -i / -input       | input image  e.g. -i test_image_1.ppm" << endl;
     cout << "        -o / -output      | output image e.g. -o output.ppm      " << endl;
+    cout << "       -ot / -out_txt     | output the ascii values generated to " << endl;
+    cout << "                          | a given path e.g -ot out.txt         " << endl;
     cout << "        -m / -mode        | ascii mode / style, available modes: " << endl;
     cout << "                          |     [-m 0] ascii_gradient1           " << endl;
     cout << "                          |     [-m 1] ascii_gradient2           " << endl;
