@@ -107,21 +107,21 @@ and to load the file in program simply use:
 <td>
 <center> 
 
-    text size: 10, mode: 4 
+text size: 10, mode: 4 
 
 </center>
 </td>
 <td>
 <center> 
 
-    text size: 10, mode: 0 
+text size: 10, mode: 0 
 
 </center>
 </td>
 <td>
 <center> 
 
-    text size: 10, mode: 3 
+text size: 10, mode: 3 
 
 </center>
 </td>
@@ -143,21 +143,21 @@ and to load the file in program simply use:
 <td>
 <center>
 
-    text size: 10, mode: 4
+text size: 10, mode: 4
 
 </center>
 </td>
 <td>
 <center>
 
-    text size: 10, mode: 0
+text size: 10, mode: 0
 
 </center>
 </td>
 <td>
 <center>
 
-    text size: 10, mode: 3
+text size: 10, mode: 3
 
 </center>
 </td>
