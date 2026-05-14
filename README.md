@@ -105,13 +105,25 @@ and to load the file in program simply use:
 
 <tr>
 <td>
-<center>text size: 10, mode: 4</center>
+<center> 
+
+    text size: 10, mode: 4 
+
+</center>
 </td>
 <td>
-<center>text size: 10, mode: 0</center>
+<center> 
+
+    text size: 10, mode: 0 
+
+</center>
 </td>
 <td>
-<center>text size: 10, mode: 3</center>
+<center> 
+
+    text size: 10, mode: 3 
+
+</center>
 </td>
 </tr>
 
@@ -129,13 +141,25 @@ and to load the file in program simply use:
 
 <tr>
 <td>
-<center>text size: 10, mode: 4</center>
+<center>
+
+    text size: 10, mode: 4
+
+</center>
 </td>
 <td>
-<center>text size: 10, mode: 0</center>
+<center>
+
+    text size: 10, mode: 0
+
+</center>
 </td>
 <td>
-<center>text size: 10, mode: 3</center>
+<center>
+
+    text size: 10, mode: 3
+
+</center>
 </td>
 </tr>
 </table>
