@@ -1,7 +1,7 @@
 # CmdImg
 A simple command line tool to create ascii art of any given image in PPM3 format. 
 
-<video src= "https://github.com/user-attachments/assets/59e0dc78-225f-473d-8526-59f928bbeeba" autoplay muted loop playsinline title="CMDIMG"> </video>
+<img src= "readme_data/cmdimg.gif" title="CMDIMG" width="100%" style="border-radius: 10px;"> 
 
 windows command prompt text size: 7 <br> original image size: 1400 X 1050 <br>
 command: 
@@ -21,6 +21,8 @@ RGB
 255 0 143
 ...
 ```
+for more check <a href = "https://en.wikipedia.org/wiki/Netpbm">Netpbm on wikipedia</a>
+
 # CmdImg: features
 - The tool uses PPM3 data to modify and apply different effects to approach desired image properties, then turn that data to `ASCII` style art.
 - Images are downscalable to desired console size (not upscalable).
@@ -43,11 +45,12 @@ RGB
 
 
 ## Usage
-<table>
+<!-- <table>
 <tr>
-<td>
+<td> -->
 
 compile the `main.cpp` file and open `command prompt` and enter 
+
 ``` 
 .\main.exe -i [input image].ppm 
 ``` 
@@ -63,9 +66,10 @@ or if don't want to generate the ascii art
 ```
 .\main.exe -i [input image].ppm -o [output].ppm -m 2 -ch 40 -no_ascii
 ```
-</td>
+
+<!-- </td>
 </tr>
-</table>
+</table> -->
 
 # Custom Modes 
 the `-lnm` command offers users to create custom modes or gradients for their ascii.
@@ -85,11 +89,55 @@ and to load the file in program simply use:
 
 
 # Examples
+
+<table>
+<tr>
+<td>
 <img src="readme_data/image.png" width="100%">
-text size: 10, mode: 4
+</td>
+<td>
 <img src="readme_data/image-2.png" width="100%">
-text size: 10, mode: 0
+</td>
+<td>
 <img src="readme_data/image-3.png" width = "100%">
-text size: 10, mode: 3
+</td>
+</tr>
+
+<tr>
+<td>
+<center>text size: 10, mode: 4</center>
+</td>
+<td>
+<center>text size: 10, mode: 0</center>
+</td>
+<td>
+<center>text size: 10, mode: 3</center>
+</td>
+</tr>
+
+<tr>
+<td>
+<img src="readme_data/nez-m4.png" width="100%">
+</td>
+<td>
+<img src="readme_data/nez-m0.png" width="100%">
+</td>
+<td>
+<img src="readme_data/nez-m3.png" width = "100%">
+</td>
+</tr>
+
+<tr>
+<td>
+<center>text size: 10, mode: 4</center>
+</td>
+<td>
+<center>text size: 10, mode: 0</center>
+</td>
+<td>
+<center>text size: 10, mode: 3</center>
+</td>
+</tr>
+</table>
 
 
